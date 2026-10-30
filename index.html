@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>English Practice｜英文學習測驗</title>
+<style>
+:root{
+  --bg:#f2f5f8;--panel:#fff;--ink:#1d2938;--muted:#667487;
+  --line:#e1e7ef;--accent:#315f91;--accent-soft:#edf3fa;
+  --good:#18794e;--bad:#b42318;--radius:16px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#eaf0f6 0,#f5f7fa 260px,var(--bg) 520px);color:var(--ink);font:16px/1.7 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:linear-gradient(120deg,#1e3552,#315f91);color:#fff}
+.header-inner{max-width:1020px;margin:auto;padding:34px 26px 30px}
+h1{font-size:29px;line-height:1.25;margin:0 0 7px;font-weight:750;letter-spacing:.2px}
+.subtitle{margin:0;color:#d9e4f0;font-size:14px}
+main{max-width:1020px;margin:26px auto;padding:0 24px 60px}
+.tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.tab{border:1px solid #d8e0e9;background:#fff;color:#46566a;padding:11px 17px;border-radius:11px;cursor:pointer;font:inherit;transition:.18s}
+.tab:hover{border-color:#9db2c9;transform:translateY(-1px)}
+.tab.active{background:var(--accent);border-color:var(--accent);color:white;box-shadow:0 5px 14px #315f912b}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:26px;margin-bottom:20px;box-shadow:0 8px 24px #1b35500b}
+h2{font-size:20px;margin:0 0 4px}
+.desc{color:var(--muted);font-size:14px;margin:0 0 20px}
+.controls{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:16px 0}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}
+select,input[type=text],input[type=number]{font:inherit;border:1px solid #cbd2da;border-radius:9px;padding:10px 12px;background:#fff;color:var(--ink)}
+select:focus,input:focus{outline:2px solid #b8cee4;outline-offset:1px}
+button.primary,button.secondary{font:inherit;border-radius:8px;padding:10px 16px;cursor:pointer}
+button.primary{background:var(--accent);color:white;border:1px solid var(--accent);box-shadow:0 3px 8px #315f9124}
+button.primary:hover{background:#244b78}
+button.secondary{background:white;color:var(--ink);border:1px solid var(--line)}
+button.secondary:hover{background:#f6f8fb;border-color:#b9c6d4}
+button:disabled{opacity:.45;cursor:not-allowed}
+.statbar{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:14px;margin:12px 0}
+.statbar strong{color:var(--ink)}
+.article{font-size:16px;line-height:2.05;white-space:normal}
+.blank{display:inline-block;min-width:142px;max-width:220px;vertical-align:middle;margin:0 4px 5px}
+.blank select{width:100%;padding:6px 28px 6px 9px;border:1px solid #aebed0;border-radius:8px;background:#f8fafc;color:#26384d;font-size:14px;line-height:1.5}
+.blank select:focus{outline:2px solid #c7d8ea;outline-offset:1px}
+.blank.correct select{border-color:var(--good);background:#edf7f1;color:var(--good)}
+.blank.wrong select{border-color:var(--bad);background:#fff1f0;color:var(--bad)}
+.feedback{margin-top:15px;padding:12px 14px;border-radius:8px;background:#f6f8fa;font-size:14px}
+.feedback.good{color:var(--good);background:#edf7f1}
+.feedback.bad{color:var(--bad);background:#fff1f0}
+.question{font-size:21px;font-weight:650;margin:12px 0 18px}
+.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.option{padding:13px 14px;text-align:left;border:1px solid var(--line);background:#fff;border-radius:9px;cursor:pointer;font:inherit}
+.option:hover:not(:disabled){border-color:#8aa4bf;background:#f8fbff}
+.option.selected{border-color:var(--accent);background:var(--accent-soft)}
+.option.correct{border-color:var(--good);background:#edf7f1}
+.option.wrong{border-color:var(--bad);background:#fff1f0}
+.progress{height:7px;background:#edf0f3;border-radius:99px;overflow:hidden;margin:14px 0}
+.progress>div{height:100%;background:var(--accent);width:0;transition:width .2s}
+.word-meta{font-size:14px;color:var(--muted);margin-bottom:4px}
+.word-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px}
+.word-row{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px solid #edf0f2}
+.word-row strong{font-weight:650}
+.word-row span:last-child{text-align:right;color:var(--muted)}
+.note{font-size:13px;color:var(--muted);margin-top:12px}
+.hidden{display:none!important}
+.result{font-size:17px;font-weight:650;margin-top:14px}
+@media(max-width:620px){
+ .header-inner{padding:26px 18px}.header-inner h1{font-size:24px}
+ main{padding:0 14px 40px;margin-top:18px}
+ .panel{padding:19px}
+ .options,.word-list{grid-template-columns:1fr}
+ .question{font-size:19px}
+ .blank{min-width:122px;max-width:190px}
+ .tab{flex:1 1 100%;text-align:left}
+}
+</style>
+</head>
+<body>
+<header><div class="header-inner">
+  <p style="margin:0 0 7px;font-size:11px;letter-spacing:2px;font-weight:700;color:#a9d2cb">VOCABULARY · READING · PRACTICE</p>
+  <h1>English Practice</h1>
+  <p class="subtitle">英文單字與閱讀理解練習｜三個單元・隨機出題</p>
+</div></header>
+<main>
+  <nav class="tabs" aria-label="學習單元">
+    <button class="tab active" data-tab="cloze">01 閱讀克漏字</button>
+    <button class="tab" data-tab="vocab">02 單字測驗</button>
+    <button class="tab" data-tab="definition">03 英文解釋配對</button>
+  </nav>
+
+  <section id="cloze" class="panel">
+    <h2>閱讀克漏字</h2>
+    <p class="desc">每次開始都會重新隨機挖空，優先挑選文章中的關鍵字與較有挑戰性的字詞。每格提供四個選項，依上下文選出最適合的答案。</p>
+    <div class="controls">
+      <div><label for="articleSelect">選擇文章</label>
+        <select id="articleSelect"><option value="0">文章 1｜Leonardo</option><option value="1">文章 2｜Albert</option></select>
+      </div>
+      <div><label for="blankCount">挖空數量</label>
+        <select id="blankCount"><option>5</option><option selected>7</option><option>9</option><option>全部可挖單字</option></select>
+      </div>
+      <button class="primary" id="newCloze">重新隨機出題</button>
+    </div>
+    <div class="statbar"><span>本篇挖空：<strong id="clozeTotal">7</strong></span><span>已作答：<strong id="clozeAnswered">0</strong></span><span>每格 4 個選項</span></div>
+    <div id="articleText" class="article"></div>
+    <div class="controls">
+      <button class="primary" id="checkCloze">檢查答案</button>
+      <button class="secondary" id="showCloze">顯示答案</button>
+    </div>
+    <div id="clozeFeedback" aria-live="polite"></div>
+  </section>
+
+  <section id="vocab" class="panel hidden">
+    <h2>單字測驗</h2>
+    <p class="desc">依中文選出英文，或切換成自行拼字。選擇題會從本次題庫隨機抽出干擾選項。</p>
+    <div class="controls">
+      <div><label for="vocabMode">作答方式</label><select id="vocabMode"><option value="choice">中文選英文</option><option value="typing">看中文拼英文</option></select></div>
+      <div><label for="vocabCount">題數</label><select id="vocabCount"><option>10</option><option selected>20</option><option>30</option><option>60</option></select></div>
+      <button class="primary" id="startVocab">開始測驗</button>
+    </div>
+    <div id="vocabQuiz" class="hidden">
+      <div class="statbar"><span>題目 <strong id="vocabProgress">1 / 20</strong></span><span>答對 <strong id="vocabScore">0</strong></span></div>
+      <div class="progress"><div id="vocabBar"></div></div>
+      <div class="word-meta">請選出／輸入以下中文的英文</div>
+      <div class="question" id="vocabPrompt"></div>
+      <div id="vocabOptions" class="options"></div>
+      <div id="vocabTyping" class="controls hidden">
+        <input id="vocabInput" type="text" placeholder="輸入英文單字或片語" autocomplete="off">
+        <button class="primary" id="submitVocab">送出</button>
+      </div>
+      <div id="vocabFeedback" aria-live="polite"></div>
+      <div class="controls"><button class="primary hidden" id="nextVocab">下一題</button></div>
+    </div>
+    <div id="vocabResult" class="result"></div>
+  </section>
+
+  <section id="definition" class="panel hidden">
+    <h2>英文解釋配對</h2>
+    <p class="desc">先顯示單字與中文意思，再從英文解釋中選出最符合的一項。選項會隨機排列。</p>
+    <div class="controls">
+      <div><label for="defCount">題數</label><select id="defCount"><option>10</option><option selected>20</option></select></div>
+      <button class="primary" id="startDef">開始測驗</button>
+    </div>
+    <div id="defQuiz" class="hidden">
+      <div class="statbar"><span>題目 <strong id="defProgress">1 / 20</strong></span><span>答對 <strong id="defScore">0</strong></span></div>
+      <div class="progress"><div id="defBar"></div></div>
+      <div class="word-meta">請選出最符合的英文解釋</div>
+      <div class="question" id="defPrompt"></div>
+      <div id="defOptions" class="options"></div>
+      <div id="defFeedback" aria-live="polite"></div>
+      <div class="controls"><button class="primary hidden" id="nextDef">下一題</button></div>
+    </div>
+    <div id="defResult" class="result"></div>
+  </section>
+
+  <section class="panel">
+    <h2>單字表</h2>
+    <p class="desc">本次提供的 60 個單字與片語，附上中文意思，可用來複習。</p>
+    <div id="wordList" class="word-list"></div>
+    <p class="note">註：部分單字有多種意思，這裡依照你提供的文章與神話故事語境，選擇較常用或較符合上下文的翻譯。</p>
+  </section>
+</main>
+
+<script>
+const vocab = [
+["abandon","放棄；遺棄"],["apprentice","學徒"],["factor","因素"],["invent","發明；創造"],["notary","公證人"],["proper","適當的；恰當的"],["roam","漫遊；閒逛"],["shield","盾牌；保護"],["systematic","有系統的；有條理的"],["studio","工作室；畫室"],
+["downfall","垮台；衰敗"],["experiment","實驗；試驗"],["innovate","創新；革新"],["masterpiece","傑作"],["technique","技巧；技術"],["accountant","會計師"],["astound","使震驚；使驚訝"],["confined","受限制的；被限制在某處的"],["especially","尤其；特別"],["excel","擅長；勝過"],
+["gravity","重力；地心引力"],["Nobel prize","諾貝爾獎"],["shyness","害羞；羞怯"],["turning point","轉捩點；關鍵時刻"],["fault","錯誤；缺點；過失"],["cursed","被詛咒的；遭受詛咒的"],["nymphs","（神話中的）女仙；寧芙"],["caught her eye","吸引她的目光；引起她注意"],["struck","打擊；（使）突然想到／打動"],["fondness","喜愛；愛好"],
+["sorrow","悲傷；哀痛"],["cast","投；拋；施加（魔法）"],["knelt","跪下（kneel 的過去式）"],["consumed","吞噬；消耗"],["fled","逃走；逃離（flee 的過去式）"],["withered away","逐漸枯萎；凋謝"],["tales","故事；傳說"],["deal with","處理；應付"],["hideous","極其醜陋的；可怕的"],["pricked","刺；戳（prick 的過去式）"],
+["tip","尖端；頂端"],["fell in love","墜入愛河；愛上"],["mortal","凡人；終有一死的"],["destined","命中注定的"],["accompanied by","由……陪同；伴隨著"],["press","按；壓；逼迫"],["lamp","燈；油燈"],["trembled","顫抖；發抖"],["clutching","緊抓著；緊握著"],["wounded","受傷的；受創的"],
+["burst of rage","勃然大怒；一陣怒火"],["underworld","冥界；陰間"],["realm","領域；王國"],["set off","出發；啟程"],["ferryman","擺渡人；渡船船夫"],["longed","渴望；熱切盼望"],["embraced","擁抱；欣然接受"],["fulfill","完成；實現"],["begged","懇求；乞求"],["immortal","不朽的；永生的"]
+];
+
+const definitions = [
+["be fond of","喜愛；喜歡","to like; have affection for"],
+["drown","溺水；淹死","to die under water"],
+["figure","身形；體形","body shape"],
+["plunge","跳入；突然投入","to jump into; suddenly go down into"],
+["relieved","感到寬慰的；放心的","comforted; soothed"],
+["set out","出發；動身前往","to start to go toward a destination"],
+["still","靜止的；不動的","not moving"],
+["stride","大步走","to walk with purpose"],
+["wander","漫無目的地走；徘徊","to walk without direction; go aimlessly"],
+["weep","哭泣；落淚","to cry with great emotion"],
+["clutch","緊抓；緊握","to grab and hold tightly"],
+["destined","命中注定的","established by fate"],
+["embrace","擁抱","to hug; to hold with affection"],
+["fulfill","完成；實現","to complete"],
+["hideous","極其醜陋的；可怕的","very ugly"],
+["deal with","處理；應付","to take care of; to solve"],
+["mortal","凡人；會死亡的","human; able to die"],
+["prick","刺；戳","to puncture a tiny bit"],
+["realm","領域；王國","land; kingdom"],
+["tremble","顫抖；發抖","to shake a little bit"]
+];
+
+const articles = [
+{
+ name:"Leonardo",
+ text:"Fourth, Leonardo developed systematic skills for looking at and recording his world. Contemporary accounts suggest that when he was a child, he was already skillful as a painter. One particular story told about him says that he was asked to draw a decoration on a battle shield. Leonardo decided to paint a fearsome Medusa head: a woman with snakes for hair whose glance could turn a person to stone. Leonardo collected not only snakes but also lizards and various insects and drew them until the stench drove everyone from his room. He did not notice, but merely concentrated on his painting. In the end, it was so good, his father decided to sell it rather than give it to the man who had asked for it.",
+ targets:["systematic","contemporary","accounts","skillful","decoration","battle","shield","fearsome","glance","collected","lizards","insects","stench","concentrated"]
+},
+{
+ name:"Albert",
+ text:"When asked why he had not spoken before, he replied, “Because up to now, everything was in order.” After this first discussion, Albert still did not like to talk a great deal. Nor did he like to play with other children. Instead, like many children, he took his toys extremely seriously and would play with them endlessly, trying to understand exactly how they worked. Albert’s shyness did not extend to adults, if he wanted to know the answers to questions. And he had many questions. Typical of these were questions about gravity. Why, for example, does a leaf fall down while the moon stays suspended in the sky?",
+ targets:["replied","discussion","extremely","seriously","endlessly","understand","shyness","extend","gravity","suspended"]
+}
+];
+
+let clozeAnswers=[], clozeTargets=[];
+const $=id=>document.getElementById(id);
+function shuffle(a){let b=[...a];for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function norm(s){return s.toLowerCase().trim().replace(/[“”"'.,!?;:]/g,"").replace(/\s+/g," ");}
+document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>{
+ document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===btn));
+ ["cloze","vocab","definition"].forEach(id=>$(id).classList.toggle("hidden",id!==btn.dataset.tab));
+}));
+
+function renderCloze(){
+ const article=articles[Number($("articleSelect").value)];
+ let candidates=shuffle(article.targets);
+ const rawCount=$("blankCount").value;
+ const count=rawCount==="全部可挖單字"?candidates.length:Math.min(Number(rawCount),candidates.length);
+ clozeTargets=candidates.slice(0,count);
+ const replacements=clozeTargets.map((word,index)=>({word,token:"__BLANK_"+index+"__"})).sort((a,b)=>b.word.length-a.word.length);
+ let text=article.text;
+ replacements.forEach(({word,token})=>{
+   const escaped=word.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+   text=text.replace(new RegExp("\\b"+escaped+"\\b","i"),token);
+ });
+ const parts=text.split(/(__BLANK_\d+__)/g);
+ $("articleText").innerHTML=parts.map(part=>{
+   const m=part.match(/^__BLANK_(\d+)__$/);
+   if(!m)return part;
+   const i=Number(m[1]),answer=clozeTargets[i];
+   const distractors=shuffle(article.targets.filter(w=>norm(w)!==norm(answer))).slice(0,3);
+   const options=shuffle([answer,...distractors]);
+   return `<span class="blank" data-index="${i}"><select aria-label="第 ${i+1} 格"><option value="">選答案</option>${options.map(w=>`<option value="${w}">${w}</option>`).join("")}</select></span>`;
+ }).join("");
+ $("clozeTotal").textContent=count;$("clozeAnswered").textContent="0";$("clozeFeedback").innerHTML="";
+}
+$("newCloze").addEventListener("click",renderCloze);
+$("articleSelect").addEventListener("change",renderCloze);
+$("blankCount").addEventListener("change",renderCloze);
+function checkCloze(reveal=false){
+ let correct=0,answered=0;
+ document.querySelectorAll(".blank").forEach(el=>{
+   const i=Number(el.dataset.index),select=el.querySelector("select"),answer=clozeTargets[i];
+   const value=select.value;if(value)answered++;
+   const ok=norm(value)===norm(answer);
+   el.classList.toggle("correct",ok);el.classList.toggle("wrong",!ok);
+   if(ok)correct++;
+   if(reveal)select.value=answer;
+   select.disabled=true;
+ });
+ $("clozeAnswered").textContent=answered;
+ const msg=reveal?"已顯示本次所有答案。":`答對 ${correct} / ${clozeTargets.length} 題。`;
+ $("clozeFeedback").innerHTML=`<div class="feedback ${correct===clozeTargets.length?"good":"bad"}">${msg}<br>${clozeTargets.map((w,i)=>`${i+1}. ${w}`).join("　｜　")}</div>`;
+}
+$("checkCloze").addEventListener("click",()=>checkCloze(false));
+$("showCloze").addEventListener("click",()=>checkCloze(true));
+
+let vQuestions=[],vIndex=0,vScore=0,vLocked=false;
+function startVocab(){
+ const n=Number($("vocabCount").value);vQuestions=shuffle(vocab).slice(0,n);vIndex=0;vScore=0;
+ $("vocabQuiz").classList.remove("hidden");$("vocabResult").textContent="";showVocab();
+}
+function showVocab(){
+ vLocked=false;const q=vQuestions[vIndex],mode=$("vocabMode").value;
+ $("vocabProgress").textContent=`${vIndex+1} / ${vQuestions.length}`;$("vocabScore").textContent=vScore;
+ $("vocabBar").style.width=`${vIndex/vQuestions.length*100}%`;$("vocabPrompt").textContent=q[1];
+ $("vocabFeedback").innerHTML="";$("nextVocab").classList.add("hidden");
+ $("vocabOptions").innerHTML="";$("vocabTyping").classList.toggle("hidden",mode!=="typing");
+ if(mode==="choice"){
+   const opts=shuffle([q[0],...shuffle(vocab.filter(x=>x[0]!==q[0])).slice(0,3).map(x=>x[0])]);
+   opts.forEach(opt=>{const b=document.createElement("button");b.className="option";b.textContent=opt;b.addEventListener("click",()=>answerVocab(opt,b));$("vocabOptions").appendChild(b);});
+ }else{$("vocabInput").value="";$("vocabInput").disabled=false;$("submitVocab").disabled=false;$("vocabInput").focus();}
+}
+function answerVocab(value,button){
+ if(vLocked)return;vLocked=true;const q=vQuestions[vIndex],ok=norm(value)===norm(q[0]);if(ok)vScore++;
+ document.querySelectorAll("#vocabOptions button").forEach(b=>{b.disabled=true;if(norm(b.textContent)===norm(q[0]))b.classList.add("correct");});
+ if(button&&!ok)button.classList.add("wrong");
+ $("vocabFeedback").innerHTML=`<div class="feedback ${ok?"good":"bad"}">${ok?"正確！":"答案不正確。"} 正確答案：<strong>${q[0]}</strong> — ${q[1]}</div>`;
+ $("vocabScore").textContent=vScore;$("nextVocab").classList.remove("hidden");
+}
+$("submitVocab").addEventListener("click",()=>{if(!$("vocabInput").value.trim())return;answerVocab($("vocabInput").value);$("vocabInput").disabled=true;$("submitVocab").disabled=true;});
+$("vocabInput").addEventListener("keydown",e=>{if(e.key==="Enter")$("submitVocab").click();});
+$("nextVocab").addEventListener("click",()=>{
+ vIndex++;if(vIndex>=vQuestions.length){$("vocabQuiz").classList.add("hidden");$("vocabResult").textContent=`測驗完成：${vScore} / ${vQuestions.length} 題答對（${Math.round(vScore/vQuestions.length*100)}%）`;}else showVocab();
+});
+$("startVocab").addEventListener("click",startVocab);
+
+let dQuestions=[],dIndex=0,dScore=0,dLocked=false;
+function startDef(){dQuestions=shuffle(definitions).slice(0,Number($("defCount").value));dIndex=0;dScore=0;$("defQuiz").classList.remove("hidden");$("defResult").textContent="";showDef();}
+function showDef(){
+ dLocked=false;const q=dQuestions[dIndex];$("defProgress").textContent=`${dIndex+1} / ${dQuestions.length}`;$("defScore").textContent=dScore;
+ $("defBar").style.width=`${dIndex/dQuestions.length*100}%`;
+ $("defPrompt").textContent=`${q[0]}　（${q[1]}）`;$("defFeedback").innerHTML="";$("nextDef").classList.add("hidden");$("defOptions").innerHTML="";
+ const opts=shuffle([q[2],...shuffle(definitions.filter(x=>x[0]!==q[0])).slice(0,3).map(x=>x[2])]);
+ opts.forEach(opt=>{const b=document.createElement("button");b.className="option";b.textContent=opt;b.addEventListener("click",()=>answerDef(opt,b));$("defOptions").appendChild(b);});
+}
+function answerDef(value,button){
+ if(dLocked)return;dLocked=true;const q=dQuestions[dIndex],ok=value===q[2];if(ok)dScore++;
+ document.querySelectorAll("#defOptions button").forEach(b=>{b.disabled=true;if(b.textContent===q[2])b.classList.add("correct");});
+ if(!ok)button.classList.add("wrong");
+ $("defFeedback").innerHTML=`<div class="feedback ${ok?"good":"bad"}">${ok?"正確！":"答案不正確。"}<br>正確解釋：${q[2]}</div>`;
+ $("defScore").textContent=dScore;$("nextDef").classList.remove("hidden");
+}
+$("nextDef").addEventListener("click",()=>{dIndex++;if(dIndex>=dQuestions.length){$("defQuiz").classList.add("hidden");$("defResult").textContent=`測驗完成：${dScore} / ${dQuestions.length} 題答對（${Math.round(dScore/dQuestions.length*100)}%）`;}else showDef();});
+$("startDef").addEventListener("click",startDef);
+
+$("wordList").innerHTML=vocab.map(([w,m])=>`<div class="word-row"><strong>${w}</strong><span>${m}</span></div>`).join("");
+renderCloze();
+</script>
+</body>
+</html>
