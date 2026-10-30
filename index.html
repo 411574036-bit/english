@@ -290,18 +290,58 @@ $("startVocab").addEventListener("click",startVocab);
 let dQuestions=[],dIndex=0,dScore=0,dLocked=false;
 function startDef(){dQuestions=shuffle(definitions).slice(0,Number($("defCount").value));dIndex=0;dScore=0;$("defQuiz").classList.remove("hidden");$("defResult").textContent="";showDef();}
 function showDef(){
- dLocked=false;const q=dQuestions[dIndex];$("defProgress").textContent=`${dIndex+1} / ${dQuestions.length}`;$("defScore").textContent=dScore;
+ dLocked=false;
+ const q=dQuestions[dIndex];
+
+ $("defProgress").textContent=`${dIndex+1} / ${dQuestions.length}`;
+ $("defScore").textContent=dScore;
  $("defBar").style.width=`${dIndex/dQuestions.length*100}%`;
- $("defPrompt").textContent=q[0];$("defFeedback").innerHTML="";$("nextDef").classList.add("hidden");$("defOptions").innerHTML="";
- const opts=shuffle([q[1],...shuffle(definitions.filter(x=>x[0]!==q[0])).slice(0,3).map(x=>x[1])]);
- opts.forEach(opt=>{const b=document.createElement("button");b.className="option";b.textContent=opt;b.addEventListener("click",()=>answerDef(opt,b));$("defOptions").appendChild(b);});
+
+ $("defPrompt").textContent=q[0];
+ $("defFeedback").innerHTML="";
+ $("nextDef").classList.add("hidden");
+ $("defOptions").innerHTML="";
+
+ const opts=shuffle([
+   q[1],
+   ...shuffle(definitions.filter(x=>x[0]!==q[0]))
+     .slice(0,3)
+     .map(x=>x[1])
+ ]);
+
+ opts.forEach(opt=>{
+   const b=document.createElement("button");
+   b.className="option";
+   b.textContent=opt;
+   b.addEventListener("click",()=>answerDef(opt,b));
+   $("defOptions").appendChild(b);
+ });
 }
 function answerDef(value,button){
- if(dLocked)return;dLocked=true;const q=dQuestions[dIndex],ok=value===q[1];if(ok)dScore++;
- document.querySelectorAll("#defOptions button").forEach(b=>{b.disabled=true;if(b.textContent===q[1])b.classList.add("correct");});
+ if(dLocked)return;
+
+ dLocked=true;
+ const q=dQuestions[dIndex];
+ const ok=value===q[1];
+
+ if(ok)dScore++;
+
+ document.querySelectorAll("#defOptions button").forEach(b=>{
+   b.disabled=true;
+   if(b.textContent===q[1])b.classList.add("correct");
+ });
+
  if(!ok)button.classList.add("wrong");
- $("defFeedback").innerHTML=`<div class="feedback ${ok?"good":"bad"}">${ok?"正確！":"答案不正確。"}<br>正確解釋：${q[1]}</div>`;
- $("defScore").textContent=dScore;$("nextDef").classList.remove("hidden");
+
+ $("defFeedback").innerHTML=`
+   <div class="feedback ${ok?"good":"bad"}">
+     ${ok?"正確！":"答案不正確。"}
+     <br>正確解釋：${q[1]}
+   </div>
+ `;
+
+ $("defScore").textContent=dScore;
+ $("nextDef").classList.remove("hidden");
 }
 $("nextDef").addEventListener("click",()=>{dIndex++;if(dIndex>=dQuestions.length){$("defQuiz").classList.add("hidden");$("defResult").textContent=`測驗完成：${dScore} / ${dQuestions.length} 題答對（${Math.round(dScore/dQuestions.length*100)}%）`;}else showDef();});
 $("startDef").addEventListener("click",startDef);
