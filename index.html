@@ -236,7 +236,6 @@ function validateClozeArticle(article){
 function renderCloze(){
  const article=articles[Number($("articleSelect").value)];
 
- // 出題前先檢查答案
  const errors=validateClozeArticle(article);
 
  if(errors.length>0){
@@ -248,6 +247,70 @@ function renderCloze(){
      </div>`;
    return;
  }
+
+ // 隨機挑選題目，但保留文章原本的出現順序
+ const shuffled=shuffle(article.targets);
+ const rawCount=$("blankCount").value;
+ const count=rawCount==="全部可挖單字"
+   ? shuffled.length
+   : Math.min(Number(rawCount),shuffled.length);
+
+ const selected=new Set(
+   shuffled.slice(0,count).map(norm)
+ );
+
+ // 依照文章原始順序排列答案
+ clozeTargets=article.targets.filter(
+   word=>selected.has(norm(word))
+ );
+
+ const replacements=clozeTargets.map((word,index)=>({
+   word,
+   token:"__BLANK_"+index+"__"
+ })).sort((a,b)=>b.word.length-a.word.length);
+
+ let text=article.text;
+
+ replacements.forEach(({word,token})=>{
+   const escaped=word.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+   text=text.replace(
+     new RegExp("\\b"+escaped+"\\b","i"),
+     token
+   );
+ });
+
+ const parts=text.split(/(__BLANK_\d+__)/g);
+
+ $("articleText").innerHTML=parts.map(part=>{
+   const m=part.match(/^__BLANK_(\d+)__$/);
+
+   if(!m)return part;
+
+   const i=Number(m[1]);
+   const answer=clozeTargets[i];
+
+   const distractors=shuffle(
+     article.targets.filter(w=>norm(w)!==norm(answer))
+   ).slice(0,3);
+
+   const options=shuffle([answer,...distractors]);
+
+   return `
+     <span class="blank" data-index="${i}">
+       <select aria-label="第 ${i+1} 格">
+         <option value="">選答案</option>
+         ${options.map(w=>`
+           <option value="${w}">${w}</option>
+         `).join("")}
+       </select>
+     </span>
+   `;
+ }).join("");
+
+ $("clozeTotal").textContent=count;
+ $("clozeAnswered").textContent="0";
+ $("clozeFeedback").innerHTML="";
+}
 
  let candidates=shuffle(article.targets);
  const rawCount=$("blankCount").value;
@@ -274,20 +337,55 @@ $("newCloze").addEventListener("click",renderCloze);
 $("articleSelect").addEventListener("change",renderCloze);
 $("blankCount").addEventListener("change",renderCloze);
 function checkCloze(reveal=false){
- let correct=0,answered=0;
+ let correct=0;
+ let answered=0;
+
  document.querySelectorAll(".blank").forEach(el=>{
-   const i=Number(el.dataset.index),select=el.querySelector("select"),answer=clozeTargets[i];
-   const value=select.value;if(value)answered++;
+   const i=Number(el.dataset.index);
+   const select=el.querySelector("select");
+   const answer=clozeTargets[i];
+
+   // 顯示答案時，先填入正確答案再進行判斷
+   if(reveal){
+     select.value=answer;
+   }
+
+   const value=select.value;
+
+   if(value)answered++;
+
    const ok=norm(value)===norm(answer);
-   el.classList.toggle("correct",ok);el.classList.toggle("wrong",!ok);
+
    if(ok)correct++;
-   if(reveal)select.value=answer;
+
+   el.classList.toggle("correct",ok);
+   el.classList.toggle("wrong",!ok);
+
    select.disabled=true;
  });
+
  $("clozeAnswered").textContent=answered;
- const msg=reveal?"已顯示本次所有答案。":`答對 ${correct} / ${clozeTargets.length} 題。`;
- $("clozeFeedback").innerHTML=`<div class="feedback ${correct===clozeTargets.length?"good":"bad"}">${msg}<br>${clozeTargets.map((w,i)=>`${i+1}. ${w}`).join("　｜　")}</div>`;
+
+ const msg=reveal
+   ?"已顯示本次所有正確答案。"
+   :`答對 ${correct} / ${clozeTargets.length} 題。`;
+
+ // 答案依照文章中的空格順序顯示
+ const answerList=clozeTargets.map((word,i)=>
+   `${i+1}. ${word}`
+ ).join("　｜　");
+
+ $("clozeFeedback").innerHTML=`
+   <div class="feedback ${
+     correct===clozeTargets.length?"good":"bad"
+   }">
+     ${msg}
+     <br>
+     ${answerList}
+   </div>
+ `;
 }
+  
 $("checkCloze").addEventListener("click",()=>checkCloze(false));
 $("showCloze").addEventListener("click",()=>checkCloze(true));
 
