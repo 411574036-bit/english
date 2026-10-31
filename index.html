@@ -79,6 +79,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
   <h1>English Practice</h1>
   <p class="subtitle">英文單字與閱讀理解練習｜三個單元・隨機出題</p>
 </div></header>
+
 <main>
   <nav class="tabs" aria-label="學習單元">
     <button class="tab active" data-tab="cloze">01 閱讀克漏字</button>
@@ -90,15 +91,29 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <h2>閱讀克漏字</h2>
     <p class="desc">每次開始都會重新隨機挖空，優先挑選文章中的關鍵字與較有挑戰性的字詞。每格提供四個選項，依上下文選出最適合的答案。</p>
     <div class="controls">
-      <div><label for="articleSelect">選擇文章</label>
-        <select id="articleSelect"><option value="0">文章 1｜Leonardo</option><option value="1">文章 2｜Albert</option></select>
+      <div>
+        <label for="articleSelect">選擇文章</label>
+        <select id="articleSelect">
+          <option value="0">文章 1｜Leonardo</option>
+          <option value="1">文章 2｜Albert</option>
+        </select>
       </div>
-      <div><label for="blankCount">挖空數量</label>
-        <select id="blankCount"><option>5</option><option selected>7</option><option>9</option><option>全部可挖單字</option></select>
+      <div>
+        <label for="blankCount">挖空數量</label>
+        <select id="blankCount">
+          <option>5</option>
+          <option selected>7</option>
+          <option>9</option>
+          <option>全部可挖單字</option>
+        </select>
       </div>
       <button class="primary" id="newCloze">重新隨機出題</button>
     </div>
-    <div class="statbar"><span>本篇挖空：<strong id="clozeTotal">7</strong></span><span>已作答：<strong id="clozeAnswered">0</strong></span><span>每格 4 個選項</span></div>
+    <div class="statbar">
+      <span>本篇挖空：<strong id="clozeTotal">7</strong></span>
+      <span>已作答：<strong id="clozeAnswered">0</strong></span>
+      <span>每格 4 個選項</span>
+    </div>
     <div id="articleText" class="article"></div>
     <div class="controls">
       <button class="primary" id="checkCloze">檢查答案</button>
@@ -111,12 +126,26 @@ button:disabled{opacity:.45;cursor:not-allowed}
     <h2>單字測驗</h2>
     <p class="desc">依中文選出英文，或切換成自行拼字。選擇題會從本次題庫隨機抽出干擾選項。</p>
     <div class="controls">
-      <div><label for="vocabMode">作答方式</label><select id="vocabMode"><option value="choice">中文選英文</option><option value="typing">看中文拼英文</option></select></div>
-      <div><label for="vocabCount">題數</label><select id="vocabCount"><option>10</option><option selected>20</option><option>30</option><option>60</option></select></div>
+      <div>
+        <label for="vocabMode">作答方式</label>
+        <select id="vocabMode">
+          <option value="choice">中文選英文</option>
+          <option value="typing">看中文拼英文</option>
+        </select>
+      </div>
+      <div>
+        <label for="vocabCount">題數</label>
+        <select id="vocabCount">
+          <option>10</option><option selected>20</option><option>30</option><option>60</option>
+        </select>
+      </div>
       <button class="primary" id="startVocab">開始測驗</button>
     </div>
     <div id="vocabQuiz" class="hidden">
-      <div class="statbar"><span>題目 <strong id="vocabProgress">1 / 20</strong></span><span>答對 <strong id="vocabScore">0</strong></span></div>
+      <div class="statbar">
+        <span>題目 <strong id="vocabProgress">1 / 20</strong></span>
+        <span>答對 <strong id="vocabScore">0</strong></span>
+      </div>
       <div class="progress"><div id="vocabBar"></div></div>
       <div class="word-meta">請選出／輸入以下中文的英文</div>
       <div class="question" id="vocabPrompt"></div>
@@ -133,13 +162,19 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
   <section id="definition" class="panel hidden">
     <h2>英文解釋配對</h2>
-   <p class="desc">先顯示英文單字，再從英文解釋中選出最符合的一項。選項會隨機排列。</p>
+    <p class="desc">先顯示英文單字，再從英文解釋中選出最符合的一項。選項會隨機排列。</p>
     <div class="controls">
-      <div><label for="defCount">題數</label><select id="defCount"><option>10</option><option selected>20</option></select></div>
+      <div>
+        <label for="defCount">題數</label>
+        <select id="defCount"><option>10</option><option selected>20</option></select>
+      </div>
       <button class="primary" id="startDef">開始測驗</button>
     </div>
     <div id="defQuiz" class="hidden">
-      <div class="statbar"><span>題目 <strong id="defProgress">1 / 20</strong></span><span>答對 <strong id="defScore">0</strong></span></div>
+      <div class="statbar">
+        <span>題目 <strong id="defProgress">1 / 20</strong></span>
+        <span>答對 <strong id="defScore">0</strong></span>
+      </div>
       <div class="progress"><div id="defBar"></div></div>
       <div class="word-meta">請選出最符合的英文解釋</div>
       <div class="question" id="defPrompt"></div>
@@ -204,38 +239,60 @@ const articles = [
 }
 ];
 
-let clozeAnswers=[], clozeTargets=[];
+let clozeTargets=[];
 const $=id=>document.getElementById(id);
-function shuffle(a){let b=[...a];for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
-function norm(s){return s.toLowerCase().trim().replace(/[“”"'.,!?;:]/g,"").replace(/\s+/g," ");}
-document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>{
- document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===btn));
- ["cloze","vocab","definition"].forEach(id=>$(id).classList.toggle("hidden",id!==btn.dataset.tab));
-}));
+
+function shuffle(a){
+ let b=[...a];
+ for(let i=b.length-1;i>0;i--){
+   let j=Math.floor(Math.random()*(i+1));
+   [b[i],b[j]]=[b[j],b[i]];
+ }
+ return b;
+}
+
+function norm(s){
+ return String(s).toLowerCase().trim()
+   .replace(/[“”"'.,!?;:]/g,"")
+   .replace(/\s+/g," ");
+}
+
+document.querySelectorAll(".tab").forEach(btn=>{
+ btn.addEventListener("click",()=>{
+   document.querySelectorAll(".tab").forEach(x=>
+     x.classList.toggle("active",x===btn)
+   );
+   ["cloze","vocab","definition"].forEach(id=>
+     $(id).classList.toggle("hidden",id!==btn.dataset.tab)
+   );
+ });
+});
 
 // 檢查克漏字答案是否存在於原文
 function validateClozeArticle(article){
-  const errors = [];
+ const errors=[];
 
-  article.targets.forEach(word => {
-    const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const pattern = new RegExp("\\b" + escaped + "\\b", "i");
+ article.targets.forEach(word=>{
+   const escaped=word.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+   const pattern=new RegExp("\\b"+escaped+"\\b","i");
 
-    if(!pattern.test(article.text)){
-      errors.push(`找不到答案：${word}`);
-    }
-  });
+   if(!pattern.test(article.text)){
+     errors.push(`找不到答案：${word}`);
+   }
+ });
 
-  const normalized = article.targets.map(norm);
-  if(new Set(normalized).size !== normalized.length){
-    errors.push("題庫中有重複的答案");
-  }
+ const normalized=article.targets.map(norm);
 
-  return errors;
+ if(new Set(normalized).size!==normalized.length){
+   errors.push("題庫中有重複的答案");
+ }
+
+ return errors;
 }
+
+// 克漏字出題：隨機抽題，但依照文章順序排列
 function renderCloze(){
  const article=articles[Number($("articleSelect").value)];
-
  const errors=validateClozeArticle(article);
 
  if(errors.length>0){
@@ -248,22 +305,23 @@ function renderCloze(){
    return;
  }
 
- // 隨機挑選題目，但保留文章原本的出現順序
  const shuffled=shuffle(article.targets);
  const rawCount=$("blankCount").value;
- const count=rawCount==="全部可挖單字"
-   ? shuffled.length
-   : Math.min(Number(rawCount),shuffled.length);
 
+ const count=rawCount==="全部可挖單字"
+   ?shuffled.length
+   :Math.min(Number(rawCount),shuffled.length);
+
+ // 先隨機選出題目，再依照原文順序排列
  const selected=new Set(
    shuffled.slice(0,count).map(norm)
  );
 
- // 依照文章原始順序排列答案
  clozeTargets=article.targets.filter(
    word=>selected.has(norm(word))
  );
 
+ // 每個答案對應一個固定編號
  const replacements=clozeTargets.map((word,index)=>({
    word,
    token:"__BLANK_"+index+"__"
@@ -273,6 +331,7 @@ function renderCloze(){
 
  replacements.forEach(({word,token})=>{
    const escaped=word.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+
    text=text.replace(
      new RegExp("\\b"+escaped+"\\b","i"),
      token
@@ -312,30 +371,12 @@ function renderCloze(){
  $("clozeFeedback").innerHTML="";
 }
 
- let candidates=shuffle(article.targets);
- const rawCount=$("blankCount").value;
- const count=rawCount==="全部可挖單字"?candidates.length:Math.min(Number(rawCount),candidates.length);
- clozeTargets=candidates.slice(0,count);
- const replacements=clozeTargets.map((word,index)=>({word,token:"__BLANK_"+index+"__"})).sort((a,b)=>b.word.length-a.word.length);
- let text=article.text;
- replacements.forEach(({word,token})=>{
-   const escaped=word.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
-   text=text.replace(new RegExp("\\b"+escaped+"\\b","i"),token);
- });
- const parts=text.split(/(__BLANK_\d+__)/g);
- $("articleText").innerHTML=parts.map(part=>{
-   const m=part.match(/^__BLANK_(\d+)__$/);
-   if(!m)return part;
-   const i=Number(m[1]),answer=clozeTargets[i];
-   const distractors=shuffle(article.targets.filter(w=>norm(w)!==norm(answer))).slice(0,3);
-   const options=shuffle([answer,...distractors]);
-   return `<span class="blank" data-index="${i}"><select aria-label="第 ${i+1} 格"><option value="">選答案</option>${options.map(w=>`<option value="${w}">${w}</option>`).join("")}</select></span>`;
- }).join("");
- $("clozeTotal").textContent=count;$("clozeAnswered").textContent="0";$("clozeFeedback").innerHTML="";
-}
+// 重新出題
 $("newCloze").addEventListener("click",renderCloze);
 $("articleSelect").addEventListener("change",renderCloze);
 $("blankCount").addEventListener("change",renderCloze);
+
+// 克漏字批改
 function checkCloze(reveal=false){
  let correct=0;
  let answered=0;
@@ -345,7 +386,7 @@ function checkCloze(reveal=false){
    const select=el.querySelector("select");
    const answer=clozeTargets[i];
 
-   // 顯示答案時，先填入正確答案再進行判斷
+   // 顯示答案時，先填入正確答案
    if(reveal){
      select.value=answer;
    }
@@ -385,44 +426,136 @@ function checkCloze(reveal=false){
    </div>
  `;
 }
-  
+
 $("checkCloze").addEventListener("click",()=>checkCloze(false));
 $("showCloze").addEventListener("click",()=>checkCloze(true));
 
+// 單字測驗
 let vQuestions=[],vIndex=0,vScore=0,vLocked=false;
+
 function startVocab(){
- const n=Number($("vocabCount").value);vQuestions=shuffle(vocab).slice(0,n);vIndex=0;vScore=0;
- $("vocabQuiz").classList.remove("hidden");$("vocabResult").textContent="";showVocab();
+ const n=Number($("vocabCount").value);
+ vQuestions=shuffle(vocab).slice(0,n);
+ vIndex=0;
+ vScore=0;
+
+ $("vocabQuiz").classList.remove("hidden");
+ $("vocabResult").textContent="";
+ showVocab();
 }
+
 function showVocab(){
- vLocked=false;const q=vQuestions[vIndex],mode=$("vocabMode").value;
- $("vocabProgress").textContent=`${vIndex+1} / ${vQuestions.length}`;$("vocabScore").textContent=vScore;
- $("vocabBar").style.width=`${vIndex/vQuestions.length*100}%`;$("vocabPrompt").textContent=q[1];
- $("vocabFeedback").innerHTML="";$("nextVocab").classList.add("hidden");
- $("vocabOptions").innerHTML="";$("vocabTyping").classList.toggle("hidden",mode!=="typing");
+ vLocked=false;
+
+ const q=vQuestions[vIndex];
+ const mode=$("vocabMode").value;
+
+ $("vocabProgress").textContent=`${vIndex+1} / ${vQuestions.length}`;
+ $("vocabScore").textContent=vScore;
+ $("vocabBar").style.width=`${vIndex/vQuestions.length*100}%`;
+ $("vocabPrompt").textContent=q[1];
+
+ $("vocabFeedback").innerHTML="";
+ $("nextVocab").classList.add("hidden");
+ $("vocabOptions").innerHTML="";
+
+ $("vocabTyping").classList.toggle("hidden",mode!=="typing");
+
  if(mode==="choice"){
-   const opts=shuffle([q[0],...shuffle(vocab.filter(x=>x[0]!==q[0])).slice(0,3).map(x=>x[0])]);
-   opts.forEach(opt=>{const b=document.createElement("button");b.className="option";b.textContent=opt;b.addEventListener("click",()=>answerVocab(opt,b));$("vocabOptions").appendChild(b);});
- }else{$("vocabInput").value="";$("vocabInput").disabled=false;$("submitVocab").disabled=false;$("vocabInput").focus();}
+   const opts=shuffle([
+     q[0],
+     ...shuffle(vocab.filter(x=>x[0]!==q[0]))
+       .slice(0,3).map(x=>x[0])
+   ]);
+
+   opts.forEach(opt=>{
+     const b=document.createElement("button");
+     b.className="option";
+     b.textContent=opt;
+     b.addEventListener("click",()=>answerVocab(opt,b));
+     $("vocabOptions").appendChild(b);
+   });
+ }else{
+   $("vocabInput").value="";
+   $("vocabInput").disabled=false;
+   $("submitVocab").disabled=false;
+   $("vocabInput").focus();
+ }
 }
+
 function answerVocab(value,button){
- if(vLocked)return;vLocked=true;const q=vQuestions[vIndex],ok=norm(value)===norm(q[0]);if(ok)vScore++;
- document.querySelectorAll("#vocabOptions button").forEach(b=>{b.disabled=true;if(norm(b.textContent)===norm(q[0]))b.classList.add("correct");});
+ if(vLocked)return;
+
+ vLocked=true;
+
+ const q=vQuestions[vIndex];
+ const ok=norm(value)===norm(q[0]);
+
+ if(ok)vScore++;
+
+ document.querySelectorAll("#vocabOptions button").forEach(b=>{
+   b.disabled=true;
+
+   if(norm(b.textContent)===norm(q[0])){
+     b.classList.add("correct");
+   }
+ });
+
  if(button&&!ok)button.classList.add("wrong");
- $("vocabFeedback").innerHTML=`<div class="feedback ${ok?"good":"bad"}">${ok?"正確！":"答案不正確。"} 正確答案：<strong>${q[0]}</strong> — ${q[1]}</div>`;
- $("vocabScore").textContent=vScore;$("nextVocab").classList.remove("hidden");
+
+ $("vocabFeedback").innerHTML=`
+   <div class="feedback ${ok?"good":"bad"}">
+     ${ok?"正確！":"答案不正確。"}
+     正確答案：<strong>${q[0]}</strong> — ${q[1]}
+   </div>
+ `;
+
+ $("vocabScore").textContent=vScore;
+ $("nextVocab").classList.remove("hidden");
 }
-$("submitVocab").addEventListener("click",()=>{if(!$("vocabInput").value.trim())return;answerVocab($("vocabInput").value);$("vocabInput").disabled=true;$("submitVocab").disabled=true;});
-$("vocabInput").addEventListener("keydown",e=>{if(e.key==="Enter")$("submitVocab").click();});
-$("nextVocab").addEventListener("click",()=>{
- vIndex++;if(vIndex>=vQuestions.length){$("vocabQuiz").classList.add("hidden");$("vocabResult").textContent=`測驗完成：${vScore} / ${vQuestions.length} 題答對（${Math.round(vScore/vQuestions.length*100)}%）`;}else showVocab();
+
+$("submitVocab").addEventListener("click",()=>{
+ if(!$("vocabInput").value.trim())return;
+
+ answerVocab($("vocabInput").value);
+ $("vocabInput").disabled=true;
+ $("submitVocab").disabled=true;
 });
+
+$("vocabInput").addEventListener("keydown",e=>{
+ if(e.key==="Enter")$("submitVocab").click();
+});
+
+$("nextVocab").addEventListener("click",()=>{
+ vIndex++;
+
+ if(vIndex>=vQuestions.length){
+   $("vocabQuiz").classList.add("hidden");
+   $("vocabResult").textContent=
+     `測驗完成：${vScore} / ${vQuestions.length} 題答對（${Math.round(vScore/vQuestions.length*100)}%）`;
+ }else{
+   showVocab();
+ }
+});
+
 $("startVocab").addEventListener("click",startVocab);
 
+// 英文解釋配對
 let dQuestions=[],dIndex=0,dScore=0,dLocked=false;
-function startDef(){dQuestions=shuffle(definitions).slice(0,Number($("defCount").value));dIndex=0;dScore=0;$("defQuiz").classList.remove("hidden");$("defResult").textContent="";showDef();}
+
+function startDef(){
+ dQuestions=shuffle(definitions).slice(0,Number($("defCount").value));
+ dIndex=0;
+ dScore=0;
+
+ $("defQuiz").classList.remove("hidden");
+ $("defResult").textContent="";
+ showDef();
+}
+
 function showDef(){
  dLocked=false;
+
  const q=dQuestions[dIndex];
 
  $("defProgress").textContent=`${dIndex+1} / ${dQuestions.length}`;
@@ -437,8 +570,7 @@ function showDef(){
  const opts=shuffle([
    q[1],
    ...shuffle(definitions.filter(x=>x[0]!==q[0]))
-     .slice(0,3)
-     .map(x=>x[1])
+     .slice(0,3).map(x=>x[1])
  ]);
 
  opts.forEach(opt=>{
@@ -449,10 +581,12 @@ function showDef(){
    $("defOptions").appendChild(b);
  });
 }
+
 function answerDef(value,button){
  if(dLocked)return;
 
  dLocked=true;
+
  const q=dQuestions[dIndex];
  const ok=value===q[1];
 
@@ -460,7 +594,10 @@ function answerDef(value,button){
 
  document.querySelectorAll("#defOptions button").forEach(b=>{
    b.disabled=true;
-   if(b.textContent===q[1])b.classList.add("correct");
+
+   if(b.textContent===q[1]){
+     b.classList.add("correct");
+   }
  });
 
  if(!ok)button.classList.add("wrong");
@@ -475,10 +612,27 @@ function answerDef(value,button){
  $("defScore").textContent=dScore;
  $("nextDef").classList.remove("hidden");
 }
-$("nextDef").addEventListener("click",()=>{dIndex++;if(dIndex>=dQuestions.length){$("defQuiz").classList.add("hidden");$("defResult").textContent=`測驗完成：${dScore} / ${dQuestions.length} 題答對（${Math.round(dScore/dQuestions.length*100)}%）`;}else showDef();});
+
+$("nextDef").addEventListener("click",()=>{
+ dIndex++;
+
+ if(dIndex>=dQuestions.length){
+   $("defQuiz").classList.add("hidden");
+   $("defResult").textContent=
+     `測驗完成：${dScore} / ${dQuestions.length} 題答對（${Math.round(dScore/dQuestions.length*100)}%）`;
+ }else{
+   showDef();
+ }
+});
+
 $("startDef").addEventListener("click",startDef);
 
-$("wordList").innerHTML=vocab.map(([w,m])=>`<div class="word-row"><strong>${w}</strong><span>${m}</span></div>`).join("");
+// 顯示 60 個單字
+$("wordList").innerHTML=vocab.map(([w,m])=>
+ `<div class="word-row"><strong>${w}</strong><span>${m}</span></div>`
+).join("");
+
+// 頁面載入時產生第一份克漏字
 renderCloze();
 </script>
 </body>
