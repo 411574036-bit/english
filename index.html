@@ -213,8 +213,42 @@ document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>
  ["cloze","vocab","definition"].forEach(id=>$(id).classList.toggle("hidden",id!==btn.dataset.tab));
 }));
 
+// 檢查克漏字答案是否存在於原文
+function validateClozeArticle(article){
+  const errors = [];
+
+  article.targets.forEach(word => {
+    const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const pattern = new RegExp("\\b" + escaped + "\\b", "i");
+
+    if(!pattern.test(article.text)){
+      errors.push(`找不到答案：${word}`);
+    }
+  });
+
+  const normalized = article.targets.map(norm);
+  if(new Set(normalized).size !== normalized.length){
+    errors.push("題庫中有重複的答案");
+  }
+
+  return errors;
+}
 function renderCloze(){
  const article=articles[Number($("articleSelect").value)];
+
+ // 出題前先檢查答案
+ const errors=validateClozeArticle(article);
+
+ if(errors.length>0){
+   $("articleText").textContent="";
+   $("clozeFeedback").innerHTML=
+     `<div class="feedback bad">
+       題庫檢查失敗，請先修正：<br>
+       ${errors.join("<br>")}
+     </div>`;
+   return;
+ }
+
  let candidates=shuffle(article.targets);
  const rawCount=$("blankCount").value;
  const count=rawCount==="全部可挖單字"?candidates.length:Math.min(Number(rawCount),candidates.length);
